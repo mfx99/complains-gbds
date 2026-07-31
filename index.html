@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GBDS অভিযোগ ও নিরাপত্তা পোর্টাল</title>
+<meta name="description" content="Gono Bishwabidyalay Debate Society (GBDS) অভিযোগ ও নিরাপত্তা পোর্টাল — একটি নিরাপদ ও গোপনীয় অভিযোগ দাখিলের ব্যবস্থা।" />
+
+<!-- Favicons — generated from the official GBDS logo -->
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="assets/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/android-chrome-512x512.png">
+<meta name="theme-color" content="#0B2A5B">
+
+<!-- Fonts: Baloo Da 2 (display) + Hind Siliguri (body) — both support Bengali -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['"Baloo Da 2"', '"Hind Siliguri"', 'sans-serif'],
+          body: ['"Hind Siliguri"', '"Baloo Da 2"', 'sans-serif'],
+        },
+        colors: {
+          navy: {
+            950: '#081A3D',
+            900: '#0B2A5B',
+            800: '#123B7A',
+            700: '#1B4E9B',
+          },
+          brand: {
+            50:  '#EEF6FF',
+            100: '#DCEEFF',
+            200: '#B7DCFF',
+            300: '#84C3FF',
+            400: '#4FA6F7',
+            500: '#2E7CF6',
+            600: '#1E5FE0',
+            700: '#1848B3',
+            800: '#173C8C',
+            900: '#15316E',
+          },
+          sky: {
+            300: '#8FE0FF',
+            400: '#5EC8F2',
+          },
+        },
+        boxShadow: {
+          soft: '0 10px 40px -12px rgba(11, 42, 91, 0.25)',
+          glass: '0 8px 32px 0 rgba(11, 42, 91, 0.15)',
+        },
+        borderRadius: {
+          '2xl': '1.25rem',
+          '3xl': '1.75rem',
+        },
+        animation: {
+          'float': 'float 6s ease-in-out infinite',
+          'float-delay': 'float 6s ease-in-out 2s infinite',
+          'pulse-ring': 'pulse-ring 2.2s cubic-bezier(0.4,0,0.6,1) infinite',
+          'fade-up': 'fade-up 0.6s ease-out forwards',
+        },
+        keyframes: {
+          float: {
+            '0%, 100%': { transform: 'translateY(0px)' },
+            '50%': { transform: 'translateY(-14px)' },
+          },
+          'pulse-ring': {
+            '0%': { transform: 'scale(0.9)', opacity: '0.7' },
+            '70%': { transform: 'scale(1.4)', opacity: '0' },
+            '100%': { transform: 'scale(0.9)', opacity: '0' },
+          },
+          'fade-up': {
+            '0%': { opacity: '0', transform: 'translateY(16px)' },
+            '100%': { opacity: '1', transform: 'translateY(0)' },
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Hind Siliguri', sans-serif; }
+  h1, h2, h3, .font-display { font-family: 'Baloo Da 2', 'Hind Siliguri', sans-serif; }
+
+  ::selection { background: #2E7CF6; color: white; }
+
+  /* Glassmorphism card */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+  }
+  .glass-dark {
+    background: rgba(11, 42, 91, 0.35);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #EEF6FF; }
+  ::-webkit-scrollbar-thumb { background: #84C3FF; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4FA6F7; }
+
+  /* Background mesh */
+  .bg-mesh {
+    background-color: #F3F8FF;
+    background-image:
+      radial-gradient(at 15% 15%, rgba(94, 200, 242, 0.28) 0px, transparent 55%),
+      radial-gradient(at 85% 10%, rgba(46, 124, 246, 0.22) 0px, transparent 55%),
+      radial-gradient(at 50% 90%, rgba(11, 42, 91, 0.10) 0px, transparent 55%);
+  }
+
+  /* Input focus ring, consistent */
+  .field-input {
+    transition: all 0.2s ease;
+  }
+  .field-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(46, 124, 246, 0.18);
+    border-color: #2E7CF6;
+  }
+
+  /* Custom checkbox / radio look */
+  .chip-option input { display: none; }
+  .chip-option span {
+    display: flex; align-items: center; gap: 0.6rem;
+    cursor: pointer; user-select: none;
+    transition: all 0.15s ease;
+  }
+  .chip-option:hover span { border-color: #84C3FF; background-color: #F5FAFF; }
+  .chip-option input:checked + span {
+    background: linear-gradient(135deg, #2E7CF6, #1848B3);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 6px 18px -6px rgba(24, 72, 179, 0.6);
+    transform: translateY(-1px);
+  }
+  .chip-option input:checked + span .chip-dot {
+    background: white;
+  }
+  .chip-option input:focus-visible + span {
+    outline: 2px solid #2E7CF6;
+    outline-offset: 2px;
+  }
+
+  .radio-card input { display: none; }
+  .radio-card span {
+    display: block; cursor: pointer; user-select: none;
+    transition: all 0.15s ease;
+  }
+  .radio-card:hover span { border-color: #84C3FF; background-color: #F5FAFF; }
+  .radio-card input:checked + span {
+    border-color: #2E7CF6;
+    background: linear-gradient(135deg, #EEF6FF, #DCEEFF);
+    box-shadow: 0 6px 18px -8px rgba(46, 124, 246, 0.5);
+  }
+  .radio-card input:checked + span .radio-dot {
+    border-color: #2E7CF6;
+  }
+  .radio-card input:focus-visible + span {
+    outline: 2px solid #2E7CF6;
+    outline-offset: 2px;
+  }
+  .radio-card input:checked + span .radio-dot::after {
+    transform: scale(1);
+  }
+  .radio-dot::after {
+    content: '';
+    display: block;
+    width: 0.6rem; height: 0.6rem;
+    border-radius: 999px;
+    background: #2E7CF6;
+    transform: scale(0);
+    transition: transform 0.15s ease;
+  }
+
+  /* Step visibility */
+  .form-step { display: none; }
+  .form-step.active { display: block; animation: fade-up 0.45s ease-out; }
+
+  /* Progress ring */
+  .progress-ring-bg { stroke: #DCEEFF; }
+  .progress-ring-fg {
+    stroke: url(#ringGradient);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s cubic-bezier(0.65,0,0.35,1);
+  }
+
+  /* Loader */
+  .loader-dot { animation: bounce-dot 1.1s infinite ease-in-out; }
+  .loader-dot:nth-child(2) { animation-delay: 0.15s; }
+  .loader-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce-dot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Visible keyboard focus for interactive elements */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid #2E7CF6;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Reduced motion respect */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  .drag-active { border-color: #2E7CF6 !important; background-color: #EEF6FF !important; }
+
+  textarea { resize: vertical; }
+</style>
+</head>
+
+<body class="bg-mesh text-navy-900 antialiased">
+
+<!-- ============ NAVBAR ============ -->
+<nav class="fixed top-0 inset-x-0 z-40 transition-all duration-300" id="navbar">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <div class="mt-3 rounded-2xl glass shadow-glass px-4 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+      <a href="#top" class="flex items-center gap-2 sm:gap-2.5 font-display font-bold text-navy-900 min-w-0">
+        <img src="assets/gbds-logo.png" alt="GBDS লোগো" width="40" height="40" class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 object-contain" />
+        <span class="text-xs sm:text-lg leading-snug">GBDS <span class="text-brand-600">অভিযোগ ও নিরাপত্তা পোর্টাল</span></span>
+      </a>
+      <a href="#complaint-form" class="hidden sm:inline-flex items-center gap-2 bg-navy-900 hover:bg-brand-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-soft hover:shadow-lg hover:-translate-y-0.5">
+        অভিযোগ দাখিল করুন
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header id="top" class="relative overflow-hidden pt-32 pb-24 sm:pt-40 sm:pb-32">
+  <!-- Decorative floating shield rings -->
+  <div class="absolute -top-16 -left-16 w-72 h-72 bg-brand-300/30 rounded-full blur-3xl"></div>
+  <div class="absolute top-24 -right-20 w-96 h-96 bg-sky-400/25 rounded-full blur-3xl"></div>
+
+  <div class="relative max-w-4xl mx-auto px-6 text-center">
+    <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur border border-brand-100 text-brand-700 text-xs sm:text-sm font-semibold px-4 py-1.5 rounded-full shadow-sm mb-7 animate-fade-up">
+      <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+      Gono Bishwabidyalay Debate Society
+    </div>
+
+    <h1 class="font-display font-extrabold text-4xl sm:text-6xl leading-[1.15] text-navy-950 mb-6" style="animation: fade-up 0.7s ease-out 0.05s both;">
+      GBDS অভিযোগ ও<br class="hidden sm:block" /> নিরাপত্তা পোর্টাল
+    </h1>
+
+    <p class="text-navy-800/80 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-4" style="animation: fade-up 0.7s ease-out 0.15s both;">
+      Gono Bishwabidyalay Debate Society (GBDS) সকল অংশগ্রহণকারীর জন্য একটি নিরাপদ, সম্মানজনক ও বৈষম্যহীন পরিবেশ নিশ্চিত করতে প্রতিশ্রুতিবদ্ধ।
+    </p>
+    <p class="text-navy-700/70 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-4" style="animation: fade-up 0.7s ease-out 0.22s both;">
+      GBDS-এর কোনো কার্যক্রম, টেলিভিশন বিতর্ক, কর্মশালা, প্রশিক্ষণ, ভ্রমণ অথবা সংশ্লিষ্ট অন্য কোনো কার্যক্রম চলাকালীন যদি কোনো অংশগ্রহণকারী হয়রানি, অসদাচরণ, বৈষম্য, নিরাপত্তাজনিত উদ্বেগ বা অন্য কোনো অনাকাঙ্ক্ষিত ঘটনার সম্মুখীন হন, তাহলে এই পোর্টালের মাধ্যমে অভিযোগ দাখিল করতে পারবেন।
+    </p>
+    <p class="inline-flex items-center gap-2 text-navy-900 font-semibold text-sm sm:text-base bg-white/70 border border-white px-4 py-2 rounded-full shadow-sm mb-10" style="animation: fade-up 0.7s ease-out 0.28s both;">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      আপনার প্রদানকৃত তথ্য সর্বোচ্চ গোপনীয়তার সঙ্গে সংরক্ষণ করা হবে।
+    </p>
+
+    <div style="animation: fade-up 0.7s ease-out 0.35s both;">
+      <a href="#complaint-form" class="group inline-flex items-center gap-2.5 bg-gradient-to-br from-brand-500 to-navy-800 text-white font-bold text-base sm:text-lg px-8 py-4 rounded-2xl shadow-soft hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+        অভিযোগ দাখিল করুন
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <!-- Trust strip -->
+    <div class="mt-14 grid grid-cols-3 gap-3 sm:gap-6 max-w-xl mx-auto" style="animation: fade-up 0.7s ease-out 0.42s both;">
+      <div class="glass rounded-2xl px-3 py-4 shadow-glass">
+        <div class="text-brand-600 mb-1 flex justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg>
+        </div>
+        <p class="text-[11px] sm:text-xs font-semibold text-navy-800">সম্পূর্ণ গোপনীয়</p>
+      </div>
+      <div class="glass rounded-2xl px-3 py-4 shadow-glass">
+        <div class="text-brand-600 mb-1 flex justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <p class="text-[11px] sm:text-xs font-semibold text-navy-800">সহজ প্রক্রিয়া</p>
+      </div>
+      <div class="glass rounded-2xl px-3 py-4 shadow-glass">
+        <div class="text-brand-600 mb-1 flex justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <p class="text-[11px] sm:text-xs font-semibold text-navy-800">দ্রুত সাড়া</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ COMPLAINT FORM SECTION ============ -->
+<main id="complaint-form" class="relative max-w-3xl mx-auto px-5 sm:px-6 pb-28 -mt-6">
+
+  <div class="glass rounded-3xl shadow-soft overflow-hidden">
+
+    <!-- Progress header -->
+    <div class="bg-gradient-to-br from-navy-900 to-brand-700 px-6 sm:px-10 py-7 relative overflow-hidden">
+      <div class="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full"></div>
+      <div class="relative flex items-center justify-between gap-4">
+        <div>
+          <h2 class="font-display font-bold text-xl sm:text-2xl text-white">অভিযোগ ফর্ম</h2>
+          <p id="stepLabel" class="text-brand-100 text-sm mt-1">ধাপ ১ / ৭ — ব্যক্তিগত তথ্য</p>
+        </div>
+        <div class="relative w-16 h-16 shrink-0">
+          <svg class="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+            <defs>
+              <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8FE0FF"/>
+                <stop offset="100%" stop-color="#FFFFFF"/>
+              </linearGradient>
+            </defs>
+            <circle class="progress-ring-bg" cx="32" cy="32" r="27" stroke-width="6" fill="none" opacity="0.25" stroke="white"/>
+            <circle id="progressRing" class="progress-ring-fg" cx="32" cy="32" r="27" stroke-width="6" fill="none" stroke-dasharray="169.6" stroke-dashoffset="169.6"/>
+          </svg>
+          <span id="progressPercent" class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">১৪%</span>
+        </div>
+      </div>
+      <!-- step dots -->
+      <div class="relative flex gap-1.5 mt-5" id="stepDots"></div>
+    </div>
+
+    <form id="complaintForm" class="px-6 sm:px-10 py-8 sm:py-10" novalidate>
+
+      <!-- honeypot spam field -->
+      <div class="hidden" aria-hidden="true">
+        <label for="website">ওয়েবসাইট (খালি রাখুন)</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <!-- STEP 1 : ব্যক্তিগত তথ্য -->
+      <section class="form-step active" data-step="1">
+        <h3 class="font-display font-bold text-lg text-navy-900 mb-1">ব্যক্তিগত তথ্য</h3>
+        <p class="text-sm text-navy-600/70 mb-6">আপনার সাথে যোগাযোগের জন্য এই তথ্যগুলো প্রয়োজন।</p>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="fullName">পূর্ণ নাম <span class="text-red-500">*</span></label>
+            <input required type="text" id="fullName" name="fullName" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="আপনার পূর্ণ নাম লিখুন" />
+            <p class="error-msg hidden text-xs text-red-500 mt-1"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="studentId">Student ID <span class="text-red-500">*</span></label>
+            <input required type="text" id="studentId" name="studentId" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="যেমনঃ 2021-15-XX" />
+            <p class="error-msg hidden text-xs text-red-500 mt-1"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="department">বিভাগ <span class="text-red-500">*</span></label>
+            <input required type="text" id="department" name="department" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="আপনার বিভাগের নাম" />
+            <p class="error-msg hidden text-xs text-red-500 mt-1"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="batch">ব্যাচ <span class="text-red-500">*</span></label>
+            <input required type="text" id="batch" name="batch" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="যেমনঃ ২৫তম ব্যাচ" />
+            <p class="error-msg hidden text-xs text-red-500 mt-1"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="mobile">মোবাইল নম্বর <span class="text-red-500">*</span></label>
+            <input required type="tel" id="mobile" name="mobile" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="01XXXXXXXXX" />
+            <p class="error-msg hidden text-xs text-red-500 mt-1"></p>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="email">ইমেইল ঠিকানা <span class="text-red-500">*</span></label>
+            <input required type="email" id="email" name="email" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="you@example.com" />
+            <p class="error-msg hidden text-xs text-red-500 mt-1"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2 : পরিচয় গোপনীয়তা -->
+      <section class="form-step" data-step="2">
+        <h3 class="font-display font-bold text-lg text-navy-900 mb-1">পরিচয় গোপনীয়তা</h3>
+        <p class="text-sm text-navy-600/70 mb-6">আপনার পরিচয় কীভাবে ব্যবহৃত হোক?</p>
+
+        <div class="space-y-3" id="privacyGroup">
+          <label class="radio-card block">
+            <input type="radio" name="privacy" value="সম্পূর্ণ গোপন রাখা হোক" required />
+            <span class="flex items-center gap-3 border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3.5">
+              <span class="radio-dot w-5 h-5 rounded-full border-2 border-navy-300 shrink-0 relative"></span>
+              আমার পরিচয় সম্পূর্ণ গোপন রাখা হোক।
+            </span>
+          </label>
+          <label class="radio-card block">
+            <input type="radio" name="privacy" value="শুধুমাত্র তদন্ত কমিটির কাছে প্রকাশ করা যেতে পারে" />
+            <span class="flex items-center gap-3 border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3.5">
+              <span class="radio-dot w-5 h-5 rounded-full border-2 border-navy-300 shrink-0 relative"></span>
+              শুধুমাত্র তদন্ত কমিটির কাছে প্রকাশ করা যেতে পারে।
+            </span>
+          </label>
+          <label class="radio-card block">
+            <input type="radio" name="privacy" value="তদন্তের স্বার্থে প্রয়োজনে প্রকাশ করা যেতে পারে" />
+            <span class="flex items-center gap-3 border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3.5">
+              <span class="radio-dot w-5 h-5 rounded-full border-2 border-navy-300 shrink-0 relative"></span>
+              তদন্তের স্বার্থে প্রয়োজনে প্রকাশ করা যেতে পারে।
+            </span>
+          </label>
+        </div>
+        <p class="error-msg hidden text-xs text-red-500 mt-2" data-for="privacyGroup"></p>
+      </section>
+
+      <!-- STEP 3 : ঘটনার তথ্য -->
+      <section class="form-step" data-step="3">
+        <h3 class="font-display font-bold text-lg text-navy-900 mb-1">ঘটনার তথ্য</h3>
+        <p class="text-sm text-navy-600/70 mb-6">ঘটনাটি কোথায় ও কখন ঘটেছে, তার তথ্য দিন (যদি জানা থাকে)।</p>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="eventName">অনুষ্ঠানের নাম</label>
+            <input type="text" id="eventName" name="eventName" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="যে অনুষ্ঠানে ঘটনাটি ঘটেছে" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="eventDate">ঘটনার তারিখ</label>
+            <input type="date" id="eventDate" name="eventDate" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="eventTime">ঘটনার সময়</label>
+            <input type="time" id="eventTime" name="eventTime" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="eventLocation">ঘটনার স্থান</label>
+            <input type="text" id="eventLocation" name="eventLocation" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="ঘটনাস্থলের বিবরণ" />
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4 : অভিযোগের বিবরণ -->
+      <section class="form-step" data-step="4">
+        <h3 class="font-display font-bold text-lg text-navy-900 mb-1">অভিযোগের বিবরণ</h3>
+        <p class="text-sm text-navy-600/70 mb-6">অভিযোগের ধরন নির্বাচন করুন এবং বিস্তারিত লিখুন।</p>
+
+        <label class="block text-sm font-semibold text-navy-800 mb-2">অভিযোগের ধরন <span class="text-red-500">*</span></label>
+        <div class="grid sm:grid-cols-2 gap-2.5 mb-2" id="complaintTypeGroup">
+          <!-- chip options injected via same pattern, static markup below -->
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="মৌখিক হয়রানি" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>মৌখিক হয়রানি</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="শারীরিক হয়রানি" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>শারীরিক হয়রানি</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="যৌন হয়রানি" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>যৌন হয়রানি</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="বুলিং" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>বুলিং</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="ক্ষমতার অপব্যবহার" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>ক্ষমতার অপব্যবহার</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="বৈষম্য" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>বৈষম্য</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="হুমকি" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>হুমকি</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="অনলাইন হয়রানি" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>অনলাইন হয়রানি</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="অননুমোদিত ছবি/ভিডিও ধারণ" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>অননুমোদিত ছবি/ভিডিও ধারণ</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="নিরাপত্তাজনিত উদ্বেগ" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>নিরাপত্তাজনিত উদ্বেগ</span></label>
+          <label class="chip-option"><input type="checkbox" name="complaintType" value="অন্যান্য" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>অন্যান্য</span></label>
+        </div>
+        <p class="error-msg hidden text-xs text-red-500 mb-5" data-for="complaintTypeGroup"></p>
+
+        <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="description">ঘটনার বিস্তারিত বিবরণ <span class="text-red-500">*</span></label>
+        <textarea required id="description" name="description" rows="6" minlength="20" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="ঘটনাটি বিস্তারিতভাবে বর্ণনা করুন..."></textarea>
+        <p class="error-msg hidden text-xs text-red-500 mt-1"></p>
+
+        <div class="grid sm:grid-cols-2 gap-5 mt-5">
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="accused">অভিযুক্ত ব্যক্তি/ব্যক্তিদের নাম বা পরিচয় (যদি জানা থাকে)</label>
+            <textarea id="accused" name="accused" rows="3" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="নাম / পরিচয় / বিবরণ"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-navy-800 mb-1.5" for="witness">প্রত্যক্ষদর্শী (যদি থাকে)</label>
+            <textarea id="witness" name="witness" rows="3" class="field-input w-full rounded-xl border border-navy-100 bg-white/80 px-4 py-3 text-navy-900 placeholder-navy-400" placeholder="প্রত্যক্ষদর্শীর নাম / বিবরণ"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5 : প্রমাণ -->
+      <section class="form-step" data-step="5">
+        <h3 class="font-display font-bold text-lg text-navy-900 mb-1">প্রমাণ সংযুক্ত করুন</h3>
+        <p class="text-sm text-navy-600/70 mb-6">ছবি, ভিডিও, অডিও অথবা PDF যুক্ত করতে পারেন (ঐচ্ছিক, সর্বোচ্চ ২৫ MB)।</p>
+
+        <div id="dropZone" class="border-2 border-dashed border-navy-200 rounded-2xl bg-white/60 px-6 py-10 text-center cursor-pointer transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto text-brand-500 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 9l5-5 5 5M12 4v13"/></svg>
+          <p class="text-navy-800 font-semibold text-sm mb-1">ফাইল টেনে আনুন অথবা ক্লিক করে বাছাই করুন</p>
+          <p class="text-navy-500 text-xs">ছবি, ভিডিও, অডিও, PDF — প্রতিটি ফাইল সর্বোচ্চ ২৫ MB</p>
+          <input type="file" id="fileInput" name="evidence" class="hidden" multiple accept="image/*,video/*,audio/*,application/pdf" />
+        </div>
+        <div id="fileList" class="mt-4 space-y-2"></div>
+        <p class="error-msg hidden text-xs text-red-500 mt-2" data-for="fileInput"></p>
+      </section>
+
+      <!-- STEP 6 : সহায়তা -->
+      <section class="form-step" data-step="6">
+        <h3 class="font-display font-bold text-lg text-navy-900 mb-1">আপনি কী ধরনের সহায়তা প্রত্যাশা করছেন?</h3>
+        <p class="text-sm text-navy-600/70 mb-6">এক বা একাধিক নির্বাচন করতে পারেন।</p>
+
+        <div class="grid sm:grid-cols-2 gap-2.5" id="supportGroup">
+          <label class="chip-option"><input type="checkbox" name="support" value="বিষয়টি তদন্ত করা হোক" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>বিষয়টি তদন্ত করা হোক</span></label>
+          <label class="chip-option"><input type="checkbox" name="support" value="নিরাপত্তা নিশ্চিত করা হোক" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>নিরাপত্তা নিশ্চিত করা হোক</span></label>
+          <label class="chip-option"><input type="checkbox" name="support" value="কাউন্সেলিং বা সহায়তা" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>কাউন্সেলিং বা সহায়তা</span></label>
+          <label class="chip-option"><input type="checkbox" name="support" value="শুধুমাত্র রেকর্ড হিসেবে সংরক্ষণ করা হোক" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>শুধুমাত্র রেকর্ড হিসেবে সংরক্ষণ করা হোক</span></label>
+          <label class="chip-option"><input type="checkbox" name="support" value="অন্যান্য" /><span class="border-2 border-navy-100 bg-white/70 rounded-xl px-4 py-3"><span class="chip-dot w-2.5 h-2.5 rounded-full bg-navy-200 shrink-0"></span>অন্যান্য</span></label>
+        </div>
+        <p class="error-msg hidden text-xs text-red-500 mt-2" data-for="supportGroup"></p>
+      </section>
+
+      <!-- STEP 7 : ঘোষণা ও পর্যালোচনা -->
+      <section class="form-step" data-step="7">
+        <h3 class="font-display font-bold text-lg text-navy-900 mb-1">পর্যালোচনা ও ঘোষণা</h3>
+        <p class="text-sm text-navy-600/70 mb-6">জমা দেওয়ার আগে অনুগ্রহ করে নিশ্চিত করুন।</p>
+
+        <div id="reviewBox" class="bg-white/70 border border-navy-100 rounded-2xl p-5 text-sm text-navy-700 space-y-1.5 mb-6"></div>
+
+        <label class="flex items-start gap-3 cursor-pointer bg-brand-50/60 border border-brand-100 rounded-xl px-4 py-4">
+          <input required type="checkbox" id="declaration" name="declaration" class="mt-1 w-5 h-5 accent-brand-600 shrink-0" />
+          <span class="text-sm text-navy-800 leading-relaxed">আমি নিশ্চিত করছি যে, আমার প্রদত্ত তথ্য আমার জানা অনুযায়ী সত্য ও সঠিক।</span>
+        </label>
+        <p class="error-msg hidden text-xs text-red-500 mt-1" data-for="declaration"></p>
+      </section>
+
+      <!-- NAV BUTTONS -->
+      <div class="flex items-center justify-between gap-3 mt-9 pt-6 border-t border-navy-100">
+        <button type="button" id="prevBtn" class="inline-flex items-center gap-2 text-navy-600 font-semibold text-sm px-5 py-3 rounded-xl hover:bg-navy-50 transition disabled:opacity-0 disabled:pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+          পূর্ববর্তী
+        </button>
+        <button type="button" id="nextBtn" class="inline-flex items-center gap-2 bg-gradient-to-br from-brand-500 to-navy-800 text-white font-bold text-sm px-7 py-3.5 rounded-xl shadow-soft hover:shadow-lg hover:-translate-y-0.5 transition-all">
+          পরবর্তী
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button type="submit" id="submitBtn" class="hidden items-center gap-2 bg-gradient-to-br from-brand-500 to-navy-800 text-white font-bold text-sm px-7 py-3.5 rounded-xl shadow-soft hover:shadow-lg hover:-translate-y-0.5 transition-all">
+          অভিযোগ জমা দিন
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <p class="text-center text-xs text-navy-500/70 mt-6 flex items-center justify-center gap-1.5">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    এই ফর্মের সকল তথ্য এনক্রিপ্টেড সংযোগে সুরক্ষিতভাবে পাঠানো হয়।
+  </p>
+</main>
+
+<!-- ============ LOADING OVERLAY ============ -->
+<div id="loadingOverlay" class="hidden fixed inset-0 z-[70] bg-navy-950/60 backdrop-blur-sm items-center justify-center">
+  <div class="glass rounded-3xl px-10 py-10 text-center shadow-2xl max-w-xs mx-4">
+    <div class="flex justify-center gap-2 mb-5">
+      <span class="loader-dot w-3.5 h-3.5 rounded-full bg-brand-500"></span>
+      <span class="loader-dot w-3.5 h-3.5 rounded-full bg-brand-500"></span>
+      <span class="loader-dot w-3.5 h-3.5 rounded-full bg-brand-500"></span>
+    </div>
+    <p class="font-display font-bold text-navy-900">আপনার অভিযোগ পাঠানো হচ্ছে...</p>
+    <p class="text-xs text-navy-500 mt-1">অনুগ্রহ করে অপেক্ষা করুন, পেজ বন্ধ করবেন না।</p>
+  </div>
+</div>
+
+<!-- ============ SUCCESS MODAL ============ -->
+<div id="successOverlay" class="hidden fixed inset-0 z-[70] bg-navy-950/70 backdrop-blur-sm items-center justify-center px-4">
+  <div class="glass rounded-3xl px-8 sm:px-12 py-10 text-center shadow-2xl max-w-md w-full relative animate-fade-up">
+    <div class="relative w-20 h-20 mx-auto mb-6">
+      <span class="absolute inset-0 rounded-full bg-brand-400 animate-pulse-ring"></span>
+      <div class="relative w-20 h-20 rounded-full bg-gradient-to-br from-brand-500 to-navy-800 flex items-center justify-center shadow-soft">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+      </div>
+    </div>
+    <h3 class="font-display font-extrabold text-2xl text-navy-950 mb-2">ধন্যবাদ!</h3>
+    <p class="text-navy-700 text-sm leading-relaxed mb-4">আপনার অভিযোগ সফলভাবে জমা হয়েছে। GBDS আপনার অভিযোগ সর্বোচ্চ গুরুত্বের সঙ্গে বিবেচনা করবে এবং আপনার তথ্যের গোপনীয়তা রক্ষা করবে।</p>
+    <div class="bg-brand-50 border border-brand-100 rounded-xl px-5 py-3 mb-6">
+      <p class="text-xs text-navy-500 mb-0.5">আপনার Complaint ID</p>
+      <p id="complaintIdDisplay" class="font-display font-bold text-lg text-brand-700 tracking-wide">GBDS-2026-0001</p>
+    </div>
+    <button id="closeSuccessBtn" class="w-full bg-navy-900 hover:bg-brand-600 text-white font-semibold text-sm px-6 py-3 rounded-xl transition">
+      বন্ধ করুন
+    </button>
+  </div>
+</div>
+
+<!-- ============ ERROR TOAST ============ -->
+<div id="errorToast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] max-w-sm w-[90%] sm:w-full">
+  <div class="bg-white border border-red-200 shadow-2xl rounded-2xl px-5 py-4 flex items-start gap-3">
+    <span class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+    </span>
+    <div class="flex-1">
+      <p class="text-sm font-semibold text-navy-900">ত্রুটি হয়েছে</p>
+      <p id="errorToastMsg" class="text-xs text-navy-600 mt-0.5">কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।</p>
+    </div>
+    <button id="closeErrorToast" class="text-navy-400 hover:text-navy-700">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative bg-gradient-to-br from-navy-950 to-navy-800 text-white mt-8">
+  <div class="max-w-6xl mx-auto px-6 sm:px-8 py-14 sm:py-16">
+
+    <!-- Brand row -->
+    <div class="flex items-center gap-3 mb-10 sm:mb-12">
+      <img src="assets/gbds-logo.png" alt="GBDS লোগো" width="40" height="40" class="w-10 h-10 shrink-0 object-contain" />
+      <div>
+        <p class="font-display font-bold text-base sm:text-lg leading-tight">GBDS অভিযোগ ও নিরাপত্তা পোর্টাল</p>
+        <p class="text-white/50 text-xs sm:text-sm mt-0.5">সকল অংশগ্রহণকারীর নিরাপত্তা ও মর্যাদা রক্ষায় প্রতিশ্রুতিবদ্ধ</p>
+      </div>
+    </div>
+
+    <!-- Info columns -->
+    <div class="grid sm:grid-cols-3 gap-10 sm:gap-8">
+      <div>
+        <h4 class="font-display font-semibold text-sm text-white/85 mb-3 tracking-wide">অভিযোগ গ্রহণের ইমেইল</h4>
+        <p class="text-white/60 text-sm break-all">complain.gbds@gmail.com</p>
+      </div>
+
+      <div>
+        <h4 class="font-display font-semibold text-sm text-white/85 mb-3 tracking-wide">সামাজিক মাধ্যম</h4>
+        <a href="https://www.facebook.com/share/18v58JvRYA/" target="_blank" rel="noopener" class="text-brand-200 hover:text-white text-sm font-medium underline decoration-white/20 underline-offset-4 hover:decoration-white/60 transition-colors">
+          GBDS Facebook Page
+        </a>
+      </div>
+
+      <div>
+        <h4 class="font-display font-semibold text-sm text-white/85 mb-3 tracking-wide">ক্রেডিট</h4>
+        <p class="text-white/50 text-xs mb-1">Developed by</p>
+        <a href="https://www.linkedin.com/in/mushfique99" target="_blank" rel="noopener" class="text-brand-200 hover:text-white text-sm font-medium underline decoration-white/20 underline-offset-4 hover:decoration-white/60 transition-colors">
+          Mushfiqur Rahman
+        </a>
+        <p class="text-white/50 text-xs mt-4 mb-1">Powered by</p>
+        <a href="https://www.facebook.com/share/1DLTSXFy8z/" target="_blank" rel="noopener" class="text-brand-200 hover:text-white text-sm font-medium underline decoration-white/20 underline-offset-4 hover:decoration-white/60 transition-colors">
+          G-TabX
+        </a>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 mt-10 sm:mt-12 pt-6 text-center">
+      <p class="text-white/40 text-xs leading-relaxed">© ২০২৬ Gono Bishwabidyalay Debate Society (GBDS)<br class="sm:hidden" /> সর্বস্বত্ব সংরক্ষিত।</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ SCROLL TO TOP ============ -->
+<button id="scrollTopBtn" aria-label="উপরে যান" class="hidden fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-brand-500 to-navy-800 text-white shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script src="script.js"></script>
+</body>
+</html>
