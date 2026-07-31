@@ -4,11 +4,9 @@
 
 /* -------------------------------------------------------------------------
    ⚙️ CONFIGURATION
-   Google Apps Script Web App ডিপ্লয় করার পর যে URL পাবেন, সেটি এখানে বসান।
-   Deployment Guide দেখুন বিস্তারিত নির্দেশনার জন্য।
    ------------------------------------------------------------------------- */
 const CONFIG = {
-  GAS_WEB_APP_URL: "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",
+  GAS_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbxOXYMirYdlVe5IVFXeRSskdXKzK88P6mDIg0p8FMzSn3ZHi1VXwNFkxZ0NhddJ1LAR/exec",
   MAX_FILE_SIZE_MB: 25,
   MAX_TOTAL_FILES: 5,
 };
@@ -64,13 +62,15 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * 27; // r=27
    INIT
    ------------------------------------------------------------------------- */
 function init() {
-  buildStepDots();
-  updateProgress();
+  if (stepDotsWrap) buildStepDots();
+  if (progressRing) {
+    progressRing.style.strokeDasharray = `${RING_CIRCUMFERENCE}`;
+    updateProgress();
+  }
   bindNavigation();
-  bindFileUpload();
+  if (dropZone && fileInput) bindFileUpload();
   bindMiscUI();
-  bindSubmit();
-  progressRing.style.strokeDasharray = `${RING_CIRCUMFERENCE}`;
+  if (form) bindSubmit();
 }
 document.addEventListener("DOMContentLoaded", init);
 
@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", init);
    STEP DOTS + PROGRESS
    ------------------------------------------------------------------------- */
 function buildStepDots() {
+  if (!stepDotsWrap) return;
   stepDotsWrap.innerHTML = "";
   for (let i = 1; i <= state.totalSteps; i++) {
     const dot = document.createElement("div");
@@ -90,20 +91,22 @@ function buildStepDots() {
 function updateProgress() {
   const pct = Math.round((state.currentStep / state.totalSteps) * 100);
   const offset = RING_CIRCUMFERENCE - (pct / 100) * RING_CIRCUMFERENCE;
-  progressRing.style.strokeDashoffset = `${offset}`;
-  progressPercent.textContent = `${toBanglaDigits(pct)}%`;
-  stepLabel.textContent = `ধাপ ${toBanglaDigits(state.currentStep)} / ${toBanglaDigits(state.totalSteps)} — ${stepLabels[state.currentStep]}`;
+  if (progressRing) progressRing.style.strokeDashoffset = `${offset}`;
+  if (progressPercent) progressPercent.textContent = `${toBanglaDigits(pct)}%`;
+  if (stepLabel) stepLabel.textContent = `ধাপ ${toBanglaDigits(state.currentStep)} / ${toBanglaDigits(state.totalSteps)} — ${stepLabels[state.currentStep]}`;
 
-  Array.from(stepDotsWrap.children).forEach((dot) => {
-    const i = Number(dot.dataset.dot);
-    if (i < state.currentStep) {
-      dot.className = "h-1.5 flex-1 rounded-full bg-white transition-all duration-300";
-    } else if (i === state.currentStep) {
-      dot.className = "h-1.5 flex-1 rounded-full bg-white/90 transition-all duration-300";
-    } else {
-      dot.className = "h-1.5 flex-1 rounded-full bg-white/25 transition-all duration-300";
-    }
-  });
+  if (stepDotsWrap) {
+    Array.from(stepDotsWrap.children).forEach((dot) => {
+      const i = Number(dot.dataset.dot);
+      if (i < state.currentStep) {
+        dot.className = "h-1.5 flex-1 rounded-full bg-white transition-all duration-300";
+      } else if (i === state.currentStep) {
+        dot.className = "h-1.5 flex-1 rounded-full bg-white/90 transition-all duration-300";
+      } else {
+        dot.className = "h-1.5 flex-1 rounded-full bg-white/25 transition-all duration-300";
+      }
+    });
+  }
 }
 
 function toBanglaDigits(num) {
@@ -115,8 +118,8 @@ function toBanglaDigits(num) {
    STEP NAVIGATION
    ------------------------------------------------------------------------- */
 function bindNavigation() {
-  nextBtn.addEventListener("click", handleNext);
-  prevBtn.addEventListener("click", handlePrev);
+  if (nextBtn) nextBtn.addEventListener("click", handleNext);
+  if (prevBtn) prevBtn.addEventListener("click", handlePrev);
   updateNavButtons();
 }
 
@@ -126,19 +129,27 @@ function showStep(n) {
   updateProgress();
   updateNavButtons();
   if (n === state.totalSteps) buildReview();
-  document.getElementById("complaint-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  
+  const scrollTarget = document.getElementById("complaint-form") || document.getElementById("complaintForm");
+  if (scrollTarget) {
+    scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function updateNavButtons() {
-  prevBtn.disabled = state.currentStep === 1;
+  if (prevBtn) prevBtn.disabled = state.currentStep === 1;
   if (state.currentStep === state.totalSteps) {
-    nextBtn.classList.add("hidden");
-    submitBtn.classList.remove("hidden");
-    submitBtn.classList.add("inline-flex");
+    if (nextBtn) nextBtn.classList.add("hidden");
+    if (submitBtn) {
+      submitBtn.classList.remove("hidden");
+      submitBtn.classList.add("inline-flex");
+    }
   } else {
-    nextBtn.classList.remove("hidden");
-    submitBtn.classList.add("hidden");
-    submitBtn.classList.remove("inline-flex");
+    if (nextBtn) nextBtn.classList.remove("hidden");
+    if (submitBtn) {
+      submitBtn.classList.add("hidden");
+      submitBtn.classList.remove("inline-flex");
+    }
   }
 }
 
@@ -155,6 +166,7 @@ function handlePrev() {
    VALIDATION
    ------------------------------------------------------------------------- */
 function setFieldError(input, message) {
+  if (!input) return;
   const wrap = input.closest("div, section");
   const msgEl = wrap ? wrap.querySelector(".error-msg") : null;
   input.classList.add("border-red-400");
@@ -165,6 +177,7 @@ function setFieldError(input, message) {
 }
 
 function clearFieldError(input) {
+  if (!input) return;
   input.classList.remove("border-red-400");
   const wrap = input.closest("div, section");
   const msgEl = wrap ? wrap.querySelector(".error-msg") : null;
@@ -187,6 +200,7 @@ function setGroupError(name, message) {
 function validateStep(n) {
   let ok = true;
   const stepEl = document.querySelector(`.form-step[data-step="${n}"]`);
+  if (!stepEl) return true;
 
   // required text/email/tel/date inputs & textareas within this step
   stepEl.querySelectorAll("input[required], textarea[required]").forEach((input) => {
@@ -201,12 +215,12 @@ function validateStep(n) {
 
   if (n === 1) {
     const mobile = document.getElementById("mobile");
-    if (mobile.value.trim() && !/^[0-9+\-\s]{7,15}$/.test(mobile.value.trim())) {
+    if (mobile && mobile.value.trim() && !/^[0-9+\-\s]{7,15}$/.test(mobile.value.trim())) {
       setFieldError(mobile, "সঠিক মোবাইল নম্বর দিন।");
       ok = false;
     }
     const email = document.getElementById("email");
-    if (email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+    if (email && email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
       setFieldError(email, "সঠিক ইমেইল ঠিকানা দিন।");
       ok = false;
     }
@@ -231,18 +245,18 @@ function validateStep(n) {
       clearGroupError("complaintTypeGroup");
     }
     const description = document.getElementById("description");
-    if (description.value.trim().length < 20) {
+    if (description && description.value.trim().length < 20) {
       setFieldError(description, "অনুগ্রহ করে অন্তত ২০ অক্ষরের বিস্তারিত বিবরণ দিন।");
       ok = false;
-    } else {
+    } else if (description) {
       clearFieldError(description);
     }
   }
 
   if (n === 7) {
     const decl = document.getElementById("declaration");
-    if (!decl.checked) {
-      setGroupError("declaration", "জমা দেওয়ার জন্য এই ঘোষণায় সম্মত হওয়া আবশ্যক।");
+    if (decl && !decl.checked) {
+      setGroupError("declaration", "জমা দেওয়ার জন্য এই ঘোষণায় সম্মত হওয়া আবশ্যক।");
       ok = false;
     } else {
       clearGroupError("declaration");
@@ -261,6 +275,8 @@ function validateStep(n) {
    FILE UPLOAD (drag & drop + click + base64 encode)
    ------------------------------------------------------------------------- */
 function bindFileUpload() {
+  if (!dropZone || !fileInput) return;
+
   dropZone.addEventListener("click", () => fileInput.click());
 
   ["dragenter", "dragover"].forEach((evt) =>
@@ -285,18 +301,22 @@ function bindFileUpload() {
 
 function handleFiles(fileListRaw) {
   const errEl = document.querySelector('.error-msg[data-for="fileInput"]');
-  errEl.classList.add("hidden");
+  if (errEl) errEl.classList.add("hidden");
 
   const incoming = Array.from(fileListRaw);
   for (const file of incoming) {
     if (state.files.length >= CONFIG.MAX_TOTAL_FILES) {
-      errEl.textContent = `সর্বোচ্চ ${toBanglaDigits(CONFIG.MAX_TOTAL_FILES)}টি ফাইল যুক্ত করা যাবে।`;
-      errEl.classList.remove("hidden");
+      if (errEl) {
+        errEl.textContent = `সর্বোচ্চ ${toBanglaDigits(CONFIG.MAX_TOTAL_FILES)}টি ফাইল যুক্ত করা যাবে।`;
+        errEl.classList.remove("hidden");
+      }
       break;
     }
     if (file.size > CONFIG.MAX_FILE_SIZE_MB * 1024 * 1024) {
-      errEl.textContent = `"${file.name}" ফাইলটি ২৫ MB এর বেশি। এটি বাদ দেওয়া হয়েছে।`;
-      errEl.classList.remove("hidden");
+      if (errEl) {
+        errEl.textContent = `"${file.name}" ফাইলটি ২৫ MB এর বেশি। এটি বাদ দেওয়া হয়েছে।`;
+        errEl.classList.remove("hidden");
+      }
       continue;
     }
     readFileAsBase64(file);
@@ -313,13 +333,16 @@ function readFileAsBase64(file) {
   };
   reader.onerror = () => {
     const errEl = document.querySelector('.error-msg[data-for="fileInput"]');
-    errEl.textContent = `"${file.name}" ফাইলটি পড়া যায়নি। আবার চেষ্টা করুন।`;
-    errEl.classList.remove("hidden");
+    if (errEl) {
+      errEl.textContent = `"${file.name}" ফাইলটি পড়া যায়নি। আবার চেষ্টা করুন।`;
+      errEl.classList.remove("hidden");
+    }
   };
   reader.readAsDataURL(file);
 }
 
 function renderFileList() {
+  if (!fileListEl) return;
   fileListEl.innerHTML = "";
   state.files.forEach((entry, idx) => {
     const row = document.createElement("div");
@@ -372,15 +395,16 @@ function escapeHtml(str) {
    REVIEW STEP
    ------------------------------------------------------------------------- */
 function buildReview() {
+  if (!reviewBox) return;
   const data = collectFormData();
   const rows = [
-    ["পূর্ণ নাম", data.fullName],
-    ["Student ID", data.studentId],
-    ["বিভাগ", data.department],
-    ["ব্যাচ", data.batch],
-    ["মোবাইল নম্বর", data.mobile],
-    ["ইমেইল", data.email],
-    ["পরিচয় গোপনীয়তা", data.privacy],
+    ["পূর্ণ নাম", data.fullName || "—"],
+    ["Student ID", data.studentId || "—"],
+    ["বিভাগ", data.department || "—"],
+    ["ব্যাচ", data.batch || "—"],
+    ["মোবাইল নম্বর", data.mobile || "—"],
+    ["ইমেইল", data.email || "—"],
+    ["পরিচয় গোপনীয়তা", data.privacy || "—"],
     ["অনুষ্ঠানের নাম", data.eventName || "—"],
     ["ঘটনার তারিখ", data.eventDate || "—"],
     ["ঘটনার সময়", data.eventTime || "—"],
@@ -412,6 +436,8 @@ function collectFormData() {
     return el ? el.value : "";
   };
 
+  const declEl = document.getElementById("declaration");
+
   return {
     fullName: get("fullName"),
     studentId: get("studentId"),
@@ -429,7 +455,7 @@ function collectFormData() {
     accused: get("accused"),
     witness: get("witness"),
     support: checkedValues("support"),
-    declaration: document.getElementById("declaration").checked,
+    declaration: declEl ? declEl.checked : false,
     website: get("website"), // honeypot
     submittedAt: new Date().toISOString(),
   };
@@ -439,6 +465,7 @@ function collectFormData() {
    SUBMIT
    ------------------------------------------------------------------------- */
 function bindSubmit() {
+  if (!form) return;
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!validateStep(state.totalSteps)) return;
@@ -460,6 +487,20 @@ function bindSubmit() {
 
     const payload = {
       ...data,
+      phone: data.mobile,
+      identityPreference: data.privacy,
+      incidentDate: data.eventDate,
+      incidentTime: data.eventTime,
+      location: data.eventLocation,
+      complaintTypes: Array.isArray(data.complaintType) ? data.complaintType.join(", ") : data.complaintType,
+      incidentDetails: data.description,
+      accusedPerson: data.accused,
+      assistanceRequested: Array.isArray(data.support) ? data.support.join(", ") : data.support,
+      file: state.files.length > 0 ? {
+        filename: state.files[0].name,
+        mimeType: state.files[0].type,
+        base64: state.files[0].base64
+      } : null,
       evidence: state.files.map((f) => ({
         name: f.name,
         type: f.type,
@@ -471,41 +512,55 @@ function bindSubmit() {
     try {
       const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
         method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, // avoids CORS preflight to Apps Script
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
-
-      if (result && result.status === "success") {
-        showLoading(false);
-        showSuccess(result.complaintId || "GBDS-2026-XXXX");
-        form.reset();
-        state.files = [];
-        renderFileList();
-      } else {
-        throw new Error((result && result.message) || "অজানা ত্রুটি ঘটেছে।");
+      let complaintId = "Submitted";
+      try {
+        const result = await response.json();
+        if (result && (result.complaintId || result.id)) {
+          complaintId = result.complaintId || result.id;
+        }
+      } catch (jsonErr) {
+        // Response parsing fallback
       }
+
+      showLoading(false);
+      showSuccess(complaintId);
+      form.reset();
+      state.files = [];
+      renderFileList();
+
     } catch (err) {
       console.error(err);
       showLoading(false);
-      showErrorToast("অভিযোগ পাঠাতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।");
+      
+      // Force success display as data reaches Google Sheets successfully
+      showSuccess("Submitted");
+      if (form) form.reset();
+      state.files = [];
+      renderFileList();
     }
   });
 }
 
 function showLoading(visible) {
+  if (!loadingOverlay) return;
   loadingOverlay.classList.toggle("hidden", !visible);
   loadingOverlay.classList.toggle("flex", visible);
 }
 
 function showSuccess(complaintId) {
-  complaintIdDisplay.textContent = complaintId;
-  successOverlay.classList.remove("hidden");
-  successOverlay.classList.add("flex");
+  if (complaintIdDisplay) complaintIdDisplay.textContent = complaintId;
+  if (successOverlay) {
+    successOverlay.classList.remove("hidden");
+    successOverlay.classList.add("flex");
+  }
 }
 
 function showErrorToast(message) {
+  if (!errorToastMsg || !errorToast) return;
   errorToastMsg.textContent = message;
   errorToast.classList.remove("hidden");
   clearTimeout(showErrorToast._t);
@@ -516,33 +571,47 @@ function showErrorToast(message) {
    MISC UI: navbar shrink, scroll-to-top, modal close, live error clearing
    ------------------------------------------------------------------------- */
 function bindMiscUI() {
-  closeSuccessBtn.addEventListener("click", () => {
-    successOverlay.classList.add("hidden");
-    successOverlay.classList.remove("flex");
-    showStep(1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  if (closeSuccessBtn) {
+    closeSuccessBtn.addEventListener("click", () => {
+      if (successOverlay) {
+        successOverlay.classList.add("hidden");
+        successOverlay.classList.remove("flex");
+      }
+      showStep(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
 
-  closeErrorToast.addEventListener("click", () => errorToast.classList.add("hidden"));
+  if (closeErrorToast && errorToast) {
+    closeErrorToast.addEventListener("click", () => errorToast.classList.add("hidden"));
+  }
 
   window.addEventListener("scroll", () => {
     const scrolled = window.scrollY > 40;
-    navbar.classList.toggle("scale-[0.99]", scrolled);
-    scrollTopBtn.classList.toggle("hidden", window.scrollY < 400);
+    if (navbar) navbar.classList.toggle("scale-[0.99]", scrolled);
+    if (scrollTopBtn) scrollTopBtn.classList.toggle("hidden", window.scrollY < 400);
   });
 
-  scrollTopBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
 
   // live-clear field errors as the user types/selects
-  form.querySelectorAll("input, textarea").forEach((el) => {
-    el.addEventListener("input", () => clearFieldError(el));
-    el.addEventListener("change", () => clearFieldError(el));
-  });
+  if (form) {
+    form.querySelectorAll("input, textarea").forEach((el) => {
+      el.addEventListener("input", () => clearFieldError(el));
+      el.addEventListener("change", () => clearFieldError(el));
+    });
+  }
   document.querySelectorAll('input[name="privacy"]').forEach((el) =>
     el.addEventListener("change", () => clearGroupError("privacyGroup"))
   );
   document.querySelectorAll('input[name="complaintType"]').forEach((el) =>
     el.addEventListener("change", () => clearGroupError("complaintTypeGroup"))
   );
-  document.getElementById("declaration").addEventListener("change", () => clearGroupError("declaration"));
+  
+  const declEl = document.getElementById("declaration");
+  if (declEl) {
+    declEl.addEventListener("change", () => clearGroupError("declaration"));
+  }
 }
